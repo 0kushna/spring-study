@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -43,22 +45,29 @@ public class PostController {
     }
     
     @GetMapping("/{id}")
-    public Post getOnePost(@PathVariable("id") Integer id) {
-        return postService.getOnePost(id);
+    public ResponseEntity<Post> getOnePost(@PathVariable("id") Integer id) {
+        Optional<Post> post = postService.getOnePost(id);
+        return post.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Transactional
     @PatchMapping("/{id}")
-    public String update(@PathVariable("id") Integer id, @RequestBody Post post){
-        String title = post.getTitle();
-        String content = post.getContent();
-        postService.updatePost(id, title, content);
-        return "update post";
+    public ResponseEntity<Post> update(@PathVariable("id") Integer id, @RequestBody Post post){
+           if(postService.updatePost(id, post)){
+             return ResponseEntity.ok().build();
+           }
+             else return ResponseEntity.notFound().build();
+      
+        
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Integer id){
-        postService.deletePost(id);
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id){
+        if(postService.deletePost(id)){
+            return ResponseEntity.noContent().build();
+        }
+          else return ResponseEntity.notFound().build();
+
     }
     
 }

@@ -1,7 +1,7 @@
 package com.kt.spring_study.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,42 +9,50 @@ import org.springframework.stereotype.Service;
 import com.kt.spring_study.model.Post;
 import com.kt.spring_study.model.PostRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class PostService {
 
     @Autowired
     private PostRepository postRepository;
-    private List<Post> posts = new ArrayList<>();
-    private int nextId = 1;
 
-    public PostService(PostRepository postRepository){
+    public PostService(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
 
-    public Post addPost(Post post){
-        post.setId(nextId++);
+    public Post addPost(Post post) {
         return postRepository.save(post);
     }
 
     public List<Post> getAllPosts() {
-       return postRepository.findAll();
+        return postRepository.findAll();
     }
 
-    public Post getOnePost(Integer id) {
-        return postRepository.findById(id).orElse(null);
+    public Optional<Post> getOnePost(Integer id) {
+        return postRepository.findById(id);
+     
     }
 
-    public Post updatePost(Integer id, String title, String content) {
-        Post post = postRepository.findById(id).orElse(null);
-        post.setTitle(title);
-        post.setContent(content);
-        return post;
+    @Transactional
+    public boolean updatePost(Integer id, Post post) {
+        Post existPost = postRepository.findById(id).orElse(null);
+        if (existPost != null) {
+            existPost.setTitle(post.getTitle());
+            existPost.setContent(post.getContent());
+            postRepository.save(existPost);
+            return true;
+        } else
+            return false;
 
     }
 
-    public void deletePost(Integer id) {
-        postRepository.deleteById(id);
+    public boolean deletePost(Integer id) {
+        Optional<Post> post = postRepository.findById(id);
+        if(post.isPresent()){
+            postRepository.deleteById(id);
+            return true;
+        }else return false;
     }
-
 
 }
