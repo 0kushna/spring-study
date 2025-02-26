@@ -10,16 +10,17 @@ import com.kt.spring_study.model.Post;
 import com.kt.spring_study.model.PostRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class PostService {
 
-    @Autowired
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
 
-    public PostService(PostRepository postRepository) {
-        this.postRepository = postRepository;
-    }
+    // public PostService(PostRepository postRepository) {
+    //     this.postRepository = postRepository;
+    // }
 
     public Post addPost(Post post) {
         return postRepository.save(post);

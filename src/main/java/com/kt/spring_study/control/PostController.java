@@ -7,6 +7,7 @@ import com.kt.spring_study.model.Post;
 import com.kt.spring_study.service.PostService;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,14 +26,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/posts")
+@RequiredArgsConstructor
 public class PostController {
 
-    @Autowired
+   
     private final PostService postService;
 
-    public PostController(PostService postService){
-        this.postService = postService;
-    }
+
+    // public PostController(PostService postService){
+    //     this.postService = postService;
+    // }
 
     @PostMapping
     public Post addPost(@RequestBody Post post) {
