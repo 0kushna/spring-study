@@ -1,40 +1,41 @@
 package com.kt.spring_study.model;
 
-import java.util.List;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
-public class Post {
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name="comments")
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    
-    @Column(nullable = false)
-    private String title;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
+   // @JsonIgnore
+    private Post post;
+
+    @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
+    @Column
     private String author;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments;
+  
     
 }

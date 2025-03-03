@@ -3,7 +3,6 @@ package com.kt.spring_study.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kt.spring_study.model.Post;
@@ -17,10 +16,6 @@ import lombok.RequiredArgsConstructor;
 public class PostService {
 
     private final PostRepository postRepository;
-
-    // public PostService(PostRepository postRepository) {
-    //     this.postRepository = postRepository;
-    // }
 
     public Post addPost(Post post) {
         return postRepository.save(post);
@@ -41,16 +36,14 @@ public class PostService {
         if (existPost != null) {
             existPost.setTitle(post.getTitle());
             existPost.setContent(post.getContent());
-            postRepository.save(existPost);
+            // postRepository.save(existPost);
             return true;
         } else
             return false;
-
     }
 
     public boolean deletePost(Integer id) {
-        Optional<Post> post = postRepository.findById(id);
-        if(post.isPresent()){
+        if(postRepository.existsById(id)){
             postRepository.deleteById(id);
             return true;
         }else return false;
