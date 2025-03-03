@@ -3,6 +3,7 @@ package com.kt.spring_study.control;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kt.spring_study.dto.PostDTO;
 import com.kt.spring_study.model.Post;
 import com.kt.spring_study.service.PostService;
 
@@ -31,34 +32,35 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public Post addPost(@RequestBody Post post) {
-        return postService.addPost(post);
+    public ResponseEntity<PostDTO> addPost(@RequestBody PostDTO postDTO) {
+        PostDTO savedPost = postService.addPost(postDTO);
+        return ResponseEntity.ok(savedPost);
     }
     
     @GetMapping("")
-    public List<Post> getAllPosts() {
-        return postService.getAllPosts();
+    public ResponseEntity<List<PostDTO>> getAllPosts() {
+        return ResponseEntity.ok(postService.getAllPosts());
     }
     
-    @GetMapping("/{id}")
-    public ResponseEntity<Post> getOnePost(@PathVariable("id") Integer id) {
-        Optional<Post> post = postService.getOnePost(id);
-        return post.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostDTO> getOnePost(@PathVariable("postId") Integer postId) {
+        return postService.getOnePost(postId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Transactional
-    @PatchMapping("/{id}")
-    public ResponseEntity<Post> update(@PathVariable("id") Integer id, @RequestBody Post post){
-           if(postService.updatePost(id, post)){
-             return ResponseEntity.ok().build();
-           }
-             else return ResponseEntity.notFound().build(); 
+    @PatchMapping("/{postId}")
+    public ResponseEntity<PostDTO> update(@PathVariable("postId") Integer postId, @RequestBody PostDTO postDTO){
+           return postService.updatePost(postId, postDTO)
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") Integer id){
-        if(postService.deletePost(id)){
-            return ResponseEntity.noContent().build();
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<String> delete(@PathVariable("postId") Integer postId){
+        if(postService.deletePost(postId)){
+            return ResponseEntity.ok("Post deleted");
         }
           else return ResponseEntity.notFound().build();
 

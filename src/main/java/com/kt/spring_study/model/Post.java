@@ -21,6 +21,7 @@ import lombok.Setter;
 @Setter
 public class Post {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -37,4 +38,10 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
     
+    public Post(Integer id, String title, String content, List<Comment> comments){
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.comments = comments;
+    }
 }
